@@ -1,0 +1,19 @@
+{% load mptt_tags %}
+
+{% block content %}
+                 <ul>
+                    {% recursetree departments %}
+                        <li>
+                            <a href="{% url 'departments' node.slug %}">
+                                {{ node.title }}
+                            </a>
+                            {% if not node.is_leaf_node %}
+                                <ul>
+                                    {{ children }}
+                                </ul>
+                            {% endif %}
+                        </li>
+                    {% endrecursetree %}
+                </ul>
+
+{% endblock %}

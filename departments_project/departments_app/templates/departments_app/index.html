@@ -1,0 +1,101 @@
+{% extends "base.html" %}
+{% load static %}
+{% load mptt_tags %}
+
+{% block menu %}
+                   {% recursetree departments %}
+          {% if node.level == 0 %}
+          {% if not node.is_leaf_node %}
+          <!-- Let op: <li> tag wordt steeds onderaan aangevuld, ander werkt het niet...-->
+          <li class="my-dropdown nav-item">
+            <a href="{% url 'departments' node.slug %}" class="nav-link collapsed" data-toggle="my-dropdown"><i class="fas fa-fw fa-table"></i>
+              {{ node.title }}</a>
+            {% else %}
+          <li><a href="{% url 'departments' node.slug %}" class="mainBarItem">{{ node.title }}</a>
+            {% endif %}
+
+            {% else %}
+            {% if not node.is_leaf_node %}
+          <div class="my-dropdown-submenu">
+              <div class="my-dropdown-submenu--first-link">
+                  <a href="{% url 'departments' node.slug %}">
+                    <span> {{ node.title }} </span>
+                </a>
+                <span class="my-dropdown-submenu--after"> > </span>
+              </div>
+
+            {% else %}
+          <div><a href="{% url 'departments' node.slug %}">{{ node.title }}</a>
+            {% endif %}
+            {% endif %}
+
+            {% if not node.is_leaf_node %}
+            <div class="children my-dropdown-menu">
+              {{ children }}
+            </div>
+            {% endif %}
+
+
+          {% endrecursetree %}
+        </ul>
+{% endblock %}
+
+{% block content %}
+
+                <!-- Begin Page Content -->
+                <div class="container-fluid">
+                    <!-- DataTales Example -->
+                    <div class="card shadow mb-4">
+                        <div class="card-header py-3">
+                            <h6 class="m-0 font-weight-bold text-primary">
+                                {% for item in ancestors %}
+                                    <a href="{{ item.get_absolute_url }}">{{ item.title }} ></a>
+                                {% endfor %}
+                            </h6>
+                        </div>
+                        <div class="card-body">
+                            <div class="table-responsive">
+                                <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+                                    <thead>
+                                        <tr>
+                                            <th>Name</th>
+                                            <th>Position</th>
+                                            <th>Office</th>
+                                            <th>Start date</th>
+                                            <th>Salary</th>
+                                        </tr>
+                                    </thead>
+                                    <tfoot>
+                                        <tr>
+                                            <th>Name</th>
+                                            <th>Position</th>
+                                            <th>Office</th>
+                                            <th>Start date</th>
+                                            <th>Salary</th>
+                                        </tr>
+                                    </tfoot>
+                                    <tbody>
+                                        {% for item in departments %}
+                                            {% for i in item.employees.all %}
+                                            <tr>
+                                                <td>{{ i.name }}</td>
+                                                <td>{{ i.position }}</td>
+                                                <td>
+                                                    {% for item in i.department.get_ancestors %}
+                                                        {{ item }}
+                                                    {% endfor %}
+                                                    {{ i.department }}
+                                                </td>
+                                                <td>{{ i.employment_date }}</td>
+                                                <td>{{ i.salary }} руб.</td>
+                                            </tr>
+                                            {% endfor %}
+                                        {% endfor %}
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- /.container-fluid -->
+{% endblock %}

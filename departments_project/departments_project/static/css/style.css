@@ -1,0 +1,75 @@
+.dropdown-submenu:hover>.dropdown-menu {
+    display: block;
+}
+
+
+.dropdown-submenu {
+    margin: 0;
+    padding: 0;
+    background:red;
+}
+
+ul.children.dropdown-menu {
+    margin: 0;
+    padding: 0;
+}
+
+li.dropdown-submenu {
+    margin: 0;
+    padding: 0;
+}
+
+.my-dropdown-menu {
+    padding: 0;
+}
+
+.my-dropdown, .my-dropdown-submenu a {
+    color: white;
+}
+
+.my-dropdown-submenu {
+    overflow: hidden;
+    height: 22px;
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    justify-content: space-between;
+}
+
+.my-dropdown-submenu--first-link {
+    position: relative;
+}
+
+.my-dropdown-submenu--after {
+    position: absolute;
+    right: 0;
+    cursor: pointer;
+    transition: all .3s ease;
+    background-color: #3961d0;
+    color: white;
+    padding: 0 1rem;
+}
+
+.my-dropdown-submenu--after:hover {
+    background-color: white;
+    color: #3961d0;
+}
+
+.my-dropdown-submenu--active {
+    height: auto;
+}
+
+.my-dropdown-submenu--active>.my-dropdown-submenu--first-link>.my-dropdown-submenu--after {
+    transform: rotate(90deg);
+}
+
+.my-dropdown-submenu--active>.my-dropdown-submenu--first-link {
+    border-bottom: 1px solid white;
+    margin-bottom: 1rem;
+}
+
+.my-dropdown-submenu--active {
+    margin-bottom: .5rem;
+}
+
+
