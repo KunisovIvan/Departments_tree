@@ -40,6 +40,10 @@ li.dropdown-submenu {
     position: relative;
 }
 
+.my-dropdown-submenu:first-child {
+    color: red;
+}
+
 .my-dropdown-submenu--after {
     position: absolute;
     right: 0;
@@ -72,4 +76,12 @@ li.dropdown-submenu {
     margin-bottom: .5rem;
 }
 
+.my-dropdown-menu-item {
+    color: white;
+    position: relative;
+}
+
+.my-dropdown a {
+    color: white;
+}
 

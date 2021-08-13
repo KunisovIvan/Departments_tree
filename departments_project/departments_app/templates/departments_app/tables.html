@@ -3,42 +3,32 @@
 {% load mptt_tags %}
 
 {% block menu %}
+        <ul class="root my-dropdown">
+                    {% recursetree departments %}
+                        <div class="my-dropdown-submenu">
+                            {% if not node.is_leaf_node %}
+                               <div class="my-dropdown-submenu--first-link">
+                                  <a href="{% url 'departments' node.slug %}">
+                                    <span> {{ node.title }} </span>
+                                  </a>
+                                  <span class="my-dropdown-submenu--after"> > </span>
+                               </div>
+                             {% else %}
+                                <div class="my-dropdown-submenu--first-link">
+                                  <a href="{% url 'departments' node.slug %}">
+                                    <span> {{ node.title }} </span>
+                                  </a>
+                               </div>
+                             {% endif %}
 
-          {% recursetree departments %}
-          {% if node.level == 0 %}
-          {% if not node.is_leaf_node %}
-          <!-- Let op: <li> tag wordt steeds onderaan aangevuld, ander werkt het niet...-->
-          <li class="my-dropdown nav-item">
-            <a href="{% url 'departments' node.slug %}" class="nav-link collapsed" data-toggle="my-dropdown"><i class="fas fa-fw fa-table"></i>
-              {{ node.title }}</a>
-            {% else %}
-          <li><a href="{% url 'departments' node.slug %}" class="mainBarItem">{{ node.title }}</a>
-            {% endif %}
-
-            {% else %}
-            {% if not node.is_leaf_node %}
-          <div class="my-dropdown-submenu">
-              <div class="my-dropdown-submenu--first-link">
-                  <a href="{% url 'departments' node.slug %}">
-                    <span> {{ node.title }} </span>
-                </a>
-                <span class="my-dropdown-submenu--after"> > </span>
-              </div>
-
-            {% else %}
-          <div><a href="{% url 'departments' node.slug %}">{{ node.title }}</a>
-            {% endif %}
-            {% endif %}
-
-            {% if not node.is_leaf_node %}
-            <div class="children my-dropdown-menu">
-              {{ children }}
-            </div>
-            {% endif %}
-
-          {% endrecursetree %}
-        </ul>
-
+                            {% if not node.is_leaf_node %}
+                                <div class="children">
+                                    {{ children }}
+                                </div>
+                            {% endif %}
+                        </div>
+                    {% endrecursetree %}
+                </ul>
 {% endblock %}
 
 {% block content %}
