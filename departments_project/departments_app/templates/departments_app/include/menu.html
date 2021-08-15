@@ -1,18 +1,30 @@
 {% load mptt_tags %}
 
 {% block content %}
-                 <ul>
+              <ul class="root my-dropdown">
                     {% recursetree departments %}
-                        <li>
-                            <a href="{% url 'departments' node.slug %}">
-                                {{ node.title }}
-                            </a>
+                        <div class="my-dropdown-submenu">
                             {% if not node.is_leaf_node %}
-                                <ul>
+                               <div class="my-dropdown-submenu--first-link">
+                                  <a href="{% url 'departments' node.slug %}">
+                                    <span> {{ node.title }} </span>
+                                  </a>
+                                  <span class="my-dropdown-submenu--after"> > </span>
+                               </div>
+                             {% else %}
+                                <div class="my-dropdown-submenu--first-link">
+                                  <a href="{% url 'departments' node.slug %}">
+                                    <span> {{ node.title }} </span>
+                                  </a>
+                               </div>
+                             {% endif %}
+
+                            {% if not node.is_leaf_node %}
+                                <div class="children">
                                     {{ children }}
-                                </ul>
+                                </div>
                             {% endif %}
-                        </li>
+                        </div>
                     {% endrecursetree %}
                 </ul>
 

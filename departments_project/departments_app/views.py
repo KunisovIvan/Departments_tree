@@ -1,45 +1,37 @@
-from django.shortcuts import render, get_object_or_404
+from django.shortcuts import get_object_or_404
 from django.views.generic import ListView
 from .models import Employees, Departments
-from django.core.paginator import Paginator
 
 
 class Home(ListView):
     model = Employees
-    template_name = 'departments_app/tables.html'
+    template_name = 'departments_app/index.html'
     context_object_name = 'employees'
     paginate_by = 10
+    queryset = Employees.objects.select_related('department')
 
     def get_context_data(self, *, object_list=None, **kwargs):
          context = super().get_context_data(**kwargs)
-         context['departments'] = Departments.objects.all()
+         context['count'] = len(Employees.objects.all())
          return context
 
-# class NewsByCategory(ListView):
-#     template_name = 'departments_app/index.html'  # news_list
-#     context_object_name = 'departments'  # object_list
-#     # allow_empty = False #Для вывода ошибки 404 при пустом list
-#     # paginate_by = 5
-#
-#     # extra_context = {'title': 'Категория'}
-#
-#     # Функция для передачи данных в шаблон
-#     def get_context_data(self, *, object_list=None, **kwargs):
-#         context = super().get_context_data(**kwargs)
-#         context['ancestors'] = get_object_or_404(Departments, slug=self.kwargs['slug']).get_ancestors(include_self=True)
-#         return context
-#
-#
-#     def get_queryset(self):
-#         return get_object_or_404(Departments, slug=self.kwargs['slug']).get_descendants(include_self=True)
 
-def employees_by_department(request, slug):
-     department = get_object_or_404(Departments, slug=slug)
-     departments = department.get_descendants(include_self=True)
-     ancestors = department.get_ancestors(include_self=True)
-     # paginator = Paginator(departments, 10)
-     # page_name = request.GET.get('page', 1)
-     # page_objects = paginator.get_page(page_name)
-     return render(request, 'departments_app/index.html', {'departments': departments,
-                                                           'ancestors': ancestors})
+class NewsByCategory(ListView):
+    template_name = 'departments_app/index.html'  # news_list
+    context_object_name = 'employees'  # object_list
+    # allow_empty = False #Для вывода ошибки 404 при пустом list
+    paginate_by = 10
+
+    # extra_context = {'title': 'Отделы'}
+
+    def get_context_data(self, *, object_list=None, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['ancestors'] = get_object_or_404(Departments, slug=self.kwargs['slug']).get_ancestors(include_self=True)
+        context['count'] = len(Employees.objects.filter(department__in=Departments.objects.get(slug=self.kwargs['slug']).get_descendants(include_self=True)))
+        return context
+
+
+    def get_queryset(self):
+         return Employees.objects.filter(department__in=Departments.objects.get(slug=self.kwargs['slug']).get_descendants(include_self=True)).select_related('department')
+
 

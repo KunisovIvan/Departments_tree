@@ -1,47 +1,13 @@
 {% extends "base.html" %}
 {% load static %}
 {% load mptt_tags %}
+{% load menu %}
 
 {% block menu %}
-
-          {% recursetree departments %}
-              {% if node.level == 0 %}
-                  {% if not node.is_leaf_node %}
-                  <!-- Let op: <li> tag wordt steeds onderaan aangevuld, ander werkt het niet...-->
-                  <li class="my-dropdown nav-item">
-                    <a href="{% url 'departments' node.slug %}" class="nav-link collapsed" data-toggle="my-dropdown"><i class="fas fa-fw fa-table"></i>
-                      {{ node.title }}</a>
-                    {% else %}
-                  <li><a href="{% url 'departments' node.slug %}" class="mainBarItem">{{ node.title }}</a>
-                    {% endif %}
-
-             {% else %}
-                {% if not node.is_leaf_node %}
-                <div class="my-dropdown-submenu">
-                  <div class="my-dropdown-submenu--first-link">
-                      <a href="{% url 'departments' node.slug %}">
-                        <span> {{ node.title }} </span>
-                     </a>
-                    <span class="my-dropdown-submenu--after"> > </span>
-                  </div>
-
-                {% else %}
-              <div><a href="{% url 'departments' node.slug %}">{{ node.title }}</a>
-                {% endif %}
-                {% endif %}
-
-                {% if not node.is_leaf_node %}
-                <div class="children my-dropdown-menu">
-                  {{ children }}
-                </div>
-                {% endif %}
-
-          {% endrecursetree %}
-        </ul>
+    {% show_menu %}
 {% endblock %}
 
 {% block content %}
-
                 <!-- Begin Page Content -->
                 <div class="container-fluid">
                     <!-- DataTales Example -->
@@ -52,10 +18,41 @@
                                     <a href="{{ item.get_absolute_url }}">{{ item.title }} ></a>
                                 {% endfor %}
                             </h6>
+                            <ul class="pagination">
+                                {% if page_obj.has_previous %}
+                                    <li class="page-item">
+                                        <a href="?page={{page_obj.previous_page_number}}" class="page-link">Previous</a>
+                                    </li>
+                                {% else %}
+                                    <li class="paginate_button page-item next disabled">
+                                        <a href="#" class="page-link">Previous</a>
+                                    </li>
+                                {% endif %}
+                                {% for p in page_obj.paginator.page_range %}
+                                    {% if page_obj.number == p %}
+                                        <li class="page-item active" aria-current="page">
+                                            <a href="?page={{p}}" class="page-link">{{p}}</a>
+                                        </li>
+                                    {% elif p > page_obj.number|add:-3 and p < page_obj.number|add:3  %}
+                                        <li class="page-item">
+                                            <a href="?page={{p}}" class="page-link">{{p}}</a>
+                                        </li>
+                                    {% endif %}
+                                {% endfor %}
+                                {% if page_obj.has_next %}
+                                    <li class="page-item">
+                                        <a href="?page={{page_obj.next_page_number}}" class="page-link">Next</a>
+                                    </li>
+                                {% else %}
+                                    <li class="paginate_button page-item next disabled">
+                                        <a href="#" class="page-link">Next</a>
+                                    </li>
+                                {% endif %}
+                            </ul>
                         </div>
                         <div class="card-body">
                             <div class="table-responsive">
-                                <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+                                <table class="table table-bordered" width="100%">
                                     <thead>
                                         <tr>
                                             <th>Name</th>
@@ -75,27 +72,23 @@
                                         </tr>
                                     </tfoot>
                                     <tbody>
-                                        {% for item in departments %}
-                                            {% for i in item.employees.all %}
+                                        {% for item in employees %}
                                             <tr>
-                                                <td>{{ i.name }}</td>
-                                                <td>{{ i.position }}</td>
-                                                <td>
-                                                    {% for item in i.department.get_ancestors %}
-                                                        {{ item }}
-                                                    {% endfor %}
-                                                    {{ i.department }}
-                                                </td>
-                                                <td>{{ i.employment_date }}</td>
-                                                <td>{{ i.salary }} руб.</td>
+                                                <td>{{ item.name }}</td>
+                                                <td>{{ item.position }}</td>
+                                                <td>{{ item.department }}</td>
+                                                <td>{{ item.employment_date }}</td>
+                                                <td>{{ item.salary }} руб.</td>
                                             </tr>
-                                            {% endfor %}
                                         {% endfor %}
                                     </tbody>
                                 </table>
                             </div>
                         </div>
+                            <div class="card-footer py-3">
+                                <h6>Выведено {{ employees.count }} из {{ count }} сотрудников</h6>
+                            </div>
+                        </div>
                     </div>
                 </div>
-                <!-- /.container-fluid -->
 {% endblock %}
